@@ -1,0 +1,31 @@
+<html lang="<%= microapp.lang %>">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width">
+  <meta name="msapplication-config" content="none">
+  <title><%- microapp.title %></title>
+  <%if (withNg || isProd) { %>
+    <link rel="stylesheet" href="https://gc-cdn.otstatic.com/gc-microapps/prod/gca-ng-app/gca-ng-app-26/gc-app-bundle.css">
+    <script src="https://gc-cdn.otstatic.com/gc-microapps/prod/gca-ng-app/gca-ng-app-26/gc-app-bundle.js"></script>
+    <script src="https://gc-cdn.otstatic.com/gc-microapps/prod/gca-ng-app/gca-ng-app-26/translations/gc-app_<%= microapp.lang %>.js"></script>
+  <% } %>
+  <script>
+    window.gcaConfig = <%- gcaConfig %>
+  </script>
+
+  <link rel="stylesheet" href="<%= microapp.cdnPath %>main.css">
+</head>
+
+<body ng-app="gca-app">
+  <gc-app>
+    <div id="app" transclude-to="app-body"></div>
+  </gc-app>
+  <%if (!isProd) { %>
+  <script data-dll="true" src="<%= microapp.cdnPath %>reactBoilerplateDeps.dll.js"></script>
+  <% } %>
+  <script type="text/javascript" src="<%= microapp.cdnPath %>main.js"></script>
+  <script src="//use.typekit.net/mgo1bcq.js"></script>
+  <script>try{Typekit.load();}catch(e){}</script>
+</body>
+</html>

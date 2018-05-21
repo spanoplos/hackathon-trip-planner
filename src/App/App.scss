@@ -1,0 +1,44 @@
+/**
+ * styles.css
+ *
+ * App container styles
+ */
+
+html {
+  font-size: 24px;
+  font-family: source-sans-pro, sans-serif;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+}
+
+// TODO: replace this in favor of more granular styles
+button {
+  border-style: none;
+}
+
+/**
+* NOTE: Fixes padding issue with gc-app ng component used with our React apps.
+*       It's possible this could change/break in the future.
+*/
+
+main.gui-site--body {
+  padding: 0;
+}
+
+.app-content {
+  display: flex;
+  width: 100%;
+}
+
+.gca-panel-body {
+  overflow-y: scroll;
+  padding: 20px;
+}
+
+.seasonal-body {
+  width: 100%;
+}

@@ -1,0 +1,48 @@
+{
+  "name": "Guest Center Admin - Marketing",
+  "imports": [
+    {
+      "locale": "en-GB",
+      "options": {
+        "translationState": "PUBLISHED",
+        "overwrite": false
+      }
+    }
+  ],
+  "dependencies": {
+    "marketing": {
+      "fileUri": "marketing.json",
+      "projectId": "ac979e56a",
+      "userIdentifier": "xvaktzactxkxddgsgpufszsykrxirg",
+      "userSecret": "16hbr9ioh1nfd6koq8k5nvcj1mTk-8923fg231101rq3rr3nirdjov7",
+      "retrievalType": "published"
+    }
+  },
+  "processors": [
+    [
+      "HarnessSmartlingClientDependencies",
+      {
+        "forEach": "dependency"
+      }
+    ],
+    "HarnessSmartlingClientLocales",
+    "JPParsing"
+  ],
+  "writers": [
+    "WindowWrapperWriter",
+    "JSONWriter"
+  ],
+  "locales": [
+    "de-de",
+    "en-gb",
+    "en-us",
+    "en-au",
+    "es-mx",
+    "es-es",
+    "fr-ca",
+    "fr-fr",
+    "it-it",
+    "ja-jp",
+    "nl-nl"
+  ]
+}

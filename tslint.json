@@ -1,0 +1,19 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended"
+  ],
+  "linterOptions": {
+    "exclude": [
+      "types/react-dates/index.d.ts"
+    ]
+  },
+  "jsRules": {},
+  "rules": {
+    "arrow-parens": [false],
+    "quotemark": ["single"],
+    "interface-name": [false],
+    "semicolon": [false]
+  },
+  "rulesDirectory": []
+}

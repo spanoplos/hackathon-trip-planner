@@ -1,0 +1,29 @@
+@import '~gca-react-components/src/styles/variables.scss';
+
+/* spacing */
+$first-column-width: 250px;
+$svg-margin: 5px;
+$svg-width: 25px;
+$icon-and-spacing: $svg-margin + $svg-width;
+$detail-first-column-width: $first-column-width - $icon-and-spacing;
+
+/* colors */
+$panel-bg-color: #F0F1F5;
+$campaign-link-color: #5BAFE6;
+$campaign-detail-border-color: #CED1D9;
+$tips-box-background: #ECEEF2;
+$tips-box-purple: #9D6DCA;
+
+%tight-padding-li {
+  li {
+    padding-bottom: 0.15em;
+  }
+}
+
+.gray-text {
+  color: $default-gray;
+}
+
+.bold-text {
+  font-weight: bold;
+}

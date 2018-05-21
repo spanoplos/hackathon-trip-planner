@@ -1,0 +1,309 @@
+{
+  "name": "gc-microapp-marketing",
+  "version": "1.0.0",
+  "description": "A GCA application for restaurants to manage their marketing content",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/opentable/gc-microapp-marketing.git"
+  },
+  "contributors": [
+    "Andrew Selbie"
+  ],
+  "private": true,
+  "scripts": {
+    "analyze:clean": "rimraf dist/stats.json",
+    "preanalyze": "yarn analyze:clean",
+    "analyze": "yarn bundle -- --profile --progress --json > dist/stats.json && yarn webpack-bundle-analyzer dist/stats.json",
+    "yarncheckversion": "node ./internals/scripts/yarncheckversion.js",
+    "preinstall": "yarn yarncheckversion",
+    "postinstall": "yarn build:dll && yarn i18n",
+    "prebuild": "yarn build:clean && yarn test",
+    "build": "yarn bundle && cp src/index.prod.ejs dist/index.html",
+    "build:clean": "yarn test:clean && rimraf ./dist",
+    "build:dll": "node ./internals/scripts/dependencies.js",
+    "bundle": "cross-env NODE_ENV=production webpack --config internals/webpack/webpack.prod.babel.js -p",
+    "start": "cross-env NODE_ENV=development node internals/server",
+    "start:with-ng": "cross-env NODE_ENV=development WITH_NG=true node internals/server",
+    "start:with-mock": "cross-env NODE_ENV=development MOCK=true node internals/server",
+    "start:withsite": "cross-env NODE_ENV=development API=MICROSITE node internals/server",
+    "start:tunnel": "cross-env NODE_ENV=development ENABLE_TUNNEL=true node internals/server",
+    "start:production": "yarn build && yarn start:prod",
+    "start:prod": "cross-env NODE_ENV=production node internals/server",
+    "pagespeed": "node ./internals/scripts/pagespeed.js",
+    "clean:all": "yarn analyze:clean && yarn test:clean && yarn build:clean",
+    "lint": "yarn lint:ts && yarn lint:css",
+    "lint:css": "stylelint ./src/**/*.scss",
+    "lint:staged": "lint-staged",
+    "lint:ts": "tslint -c tslint.json 'src/**/*.{ts,tsx}'",
+    "pretest": "yarn test:clean && yarn lint",
+    "test:clean": "rimraf ./coverage",
+    "test": "cross-env NODE_ENV=test jest",
+    "test:watch": "cross-env NODE_ENV=test jest --watchAll",
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
+    "i18n": "node ./internals/scripts/i18n-upload.js && node ./internals/scripts/i18n-download.js",
+    "i18n-upload": "node ./internals/scripts/i18n-upload.js",
+    "i18n-download": "node ./internals/scripts/i18n-download.js",
+    "package": "cp -R dist/ package/",
+    "prettier": "prettier --write 'src/**/*.{ts,tsx,scss}'"
+  },
+  "lint-staged": {
+    "*.css": "stylelint",
+    "*.ts": "tslint -c tslint.json",
+    "*.tsx": "tslint -c tslint.json"
+  },
+  "pre-commit": "lint:staged",
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "useBuiltIns": true,
+          "targets": {
+            "browsers": [
+              "last 2 versions"
+            ]
+          }
+        }
+      ],
+      "react"
+    ],
+    "plugins": [
+      "transform-class-properties"
+    ],
+    "env": {
+      "production": {
+        "only": [
+          "src"
+        ],
+        "plugins": [
+          "transform-react-remove-prop-types",
+          "transform-react-constant-elements",
+          "transform-react-inline-elements"
+        ]
+      },
+      "test": {
+        "plugins": [
+          "transform-es2015-modules-commonjs"
+        ]
+      }
+    }
+  },
+  "stylelint": {
+    "extends": "stylelint-config-standard",
+    "rules": {
+      "at-rule-no-unknown": [
+        true,
+        {
+          "ignoreAtRules": [
+            "each",
+            "extend"
+          ]
+        }
+      ],
+      "color-hex-case": "upper",
+      "string-quotes": "single",
+      "font-family-name-quotes": "always-where-recommended",
+      "selector-pseudo-class-no-unknown": [
+        true,
+        {
+          "ignorePseudoClasses": [
+            "global"
+          ]
+        }
+      ],
+      "property-no-unknown": [
+        true,
+        {
+          "ignoreProperties": [
+            "composes"
+          ]
+        }
+      ],
+      "indentation": 2
+    }
+  },
+  "dllPlugin": {
+    "path": "node_modules/react-boilerplate-dlls",
+    "exclude": [
+      "chalk",
+      "compression",
+      "cross-env",
+      "express",
+      "gca-react-components",
+      "ip",
+      "minimist",
+      "sanitize.css"
+    ],
+    "include": [
+      "core-js",
+      "lodash",
+      "eventsource-polyfill"
+    ]
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}",
+      "!src/translations/**/*.{js,json}",
+      "!src/typings.d.ts",
+      "!src/PromotedInventory/Specials/images/**",
+      "!src/PromotedInventory/Specials/SpecialsList.tsx",
+      "!src/PromotedInventory/*.tsx"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "src",
+      "internals/testing"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ],
+    "moduleNameMapper": {
+      ".*\\.css$": "<rootDir>/internals/testing/cssModule.js",
+      ".*\\.scss$": "<rootDir>/internals/testing/cssModule.js",
+      ".*\\.jpg$": "<rootDir>/internals/testing/image.js"
+    },
+    "setupFiles": [
+      "<rootDir>/internals/testing/test-bundler.js",
+      "<rootDir>/internals/testing/setupJest.js"
+    ],
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ],
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "transform": {
+      "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js",
+      "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!gca-react-components)"
+    ],
+    "mapCoverage": true
+  },
+  "prettier": {
+    "singleQuote": true,
+    "printWidth": 120,
+    "trailingComma": "all"
+  },
+  "devDependencies": {
+    "@types/enzyme": "^2.8.8",
+    "@types/jest": "^21.1.8",
+    "@types/node": "^8.0.19",
+    "@types/react": "^16.0.7",
+    "@types/react-dom": "^15.5.2",
+    "@types/react-intl": "^2.2.8",
+    "@types/react-redux": "^4.4.47",
+    "@types/react-router": "^4.0.14",
+    "@types/react-router-dom": "^4.0.7",
+    "@types/react-router-redux": "^5.0.5",
+    "@types/redux-form": "^7.0.5",
+    "@types/webpack-env": "^1.13.0",
+    "awesome-typescript-loader": "^3.2.2",
+    "babel-cli": "^6.14.0",
+    "babel-core": "^6.14.0",
+    "babel-eslint": "^7.2.1",
+    "babel-jest": "^20.0.3",
+    "babel-loader": "^7.0.0",
+    "babel-plugin-react-intl": "^2.2.0",
+    "babel-plugin-react-transform": "^2.0.2",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-plugin-transform-react-constant-elements": "^6.9.1",
+    "babel-plugin-transform-react-inline-elements": "^6.8.0",
+    "babel-plugin-transform-react-remove-prop-types": "^0.4.8",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-latest": "^6.24.1",
+    "babel-preset-react": "^6.11.1",
+    "babel-preset-react-hmre": "^1.1.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "chalk": "^2.1.0",
+    "compression": "^1.7.0",
+    "coveralls": "^2.11.13",
+    "cross-env": "^5.0.4",
+    "css-loader": "^0.28.4",
+    "ejs": "^2.5.7",
+    "enzyme": "3.0.0",
+    "enzyme-adapter-react-16": "^1.0.0",
+    "enzyme-to-json": "^3.0.0",
+    "eventsource-polyfill": "^0.9.6",
+    "exports-loader": "^0.6.4",
+    "express": "^4.15.4",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "file-loader": "^0.11.2",
+    "html-loader": "^0.5.0",
+    "http-proxy-middleware": "^0.17.2",
+    "imports-loader": "^0.7.1",
+    "ip": "^1.1.3",
+    "jest": "^21.2.0",
+    "jest-cli": "^21.2.0",
+    "json-loader": "^0.5.7",
+    "lint-staged": "^4.0.3",
+    "minimist": "^1.2.0",
+    "moment-timezone": "^0.5.14",
+    "ngrok": "^2.2.15",
+    "nock": "^9.0.14",
+    "node-sass": "^4.5.3",
+    "null-loader": "^0.1.1",
+    "postcss-cssnext": "^3.0.2",
+    "postcss-focus": "^2.0.0",
+    "postcss-loader": "^2.0.5",
+    "postcss-reporter": "^5.0.0",
+    "pre-commit": "^1.1.3",
+    "prettier": "^1.5.3",
+    "psi": "^3.0.0",
+    "raf": "^3.3.2",
+    "react-addons-perf": "^15.4.2",
+    "react-addons-test-utils": "^15.6.2",
+    "react-test-renderer": "^16.0.0",
+    "redux-mock-store": "^1.2.1",
+    "rimraf": "^2.5.4",
+    "sass-loader": "^6.0.5",
+    "shelljs": "^0.7.4",
+    "style-loader": "^0.18.2",
+    "stylelint": "^8.0.0",
+    "stylelint-config-standard": "^17.0.0",
+    "translations-runtime": "^1.2.1",
+    "ts-jest": "^21.2.3",
+    "tslint": "^5.4.3",
+    "url-loader": "^0.5.8",
+    "vinyl-fs": "^2.4.4",
+    "warning": "^3.0.0",
+    "webpack": "^3.4.1",
+    "webpack-bundle-analyzer": "^2.9.0",
+    "webpack-dev-middleware": "^1.12.0",
+    "webpack-hot-middleware": "^2.12.2"
+  },
+  "dependencies": {
+    "array-flatten": "^2.1.1",
+    "babel-polyfill": "^6.13.0",
+    "clipboard-polyfill": "^2.4.1",
+    "date-fns": "^1.28.5",
+    "duplexify": "^3.6.0",
+    "gca-react-components": "^0.1.84",
+    "history": "^4.6.3",
+    "jest-mock-now": "^1.1.1",
+    "lodash": "^4.17.10",
+    "moment": "^2.18.1",
+    "platform": "^1.3.5",
+    "react": "^16.0.0",
+    "react-addons-create-fragment": "^15.5.4",
+    "react-dates": "^16.0.1",
+    "react-dom": "^16.0.0",
+    "react-intl": "^2.3.0",
+    "react-redux": "^5.0.5",
+    "react-router-dom": "^4.1.2",
+    "react-router-redux": "next",
+    "redux": "^3.7.2",
+    "redux-form": "^7.0.4",
+    "redux-observable": "^0.14.1",
+    "reselect": "^3.0.1",
+    "rxjs": "^5.4.2",
+    "sanitize.css": "^5.0.0",
+    "typescript": "^2.6.2",
+    "typescript-fsa": "^2.3.1",
+    "typescript-fsa-reducers": "^0.4.4",
+    "whatwg-fetch": "^2.0.1"
+  }
+}

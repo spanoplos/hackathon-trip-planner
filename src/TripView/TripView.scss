@@ -1,0 +1,23 @@
+@import '../variables.scss';
+
+.gca-trip-plan {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+
+  .content-container {
+    display: flex;
+    flex: 0 0 400px;
+    margin-top: 28px;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .category-text {
+    max-width: 500px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+}
